@@ -1,5 +1,4 @@
-var data = [[0, 0], [10, 1.5], [20,2]];
-var marker = [10, 3];
+module.exports = canvasLineChart;
 
 function canvasLineChart(c, data, marker) {
     var width = 170 * 2;
@@ -60,13 +59,14 @@ function canvasLineChart(c, data, marker) {
     });
 
     if (marker) {
+        var xAnchor = xScale(marker[0]);
+        if (xAnchor < 20) xAnchor = 20;
+        if (xAnchor > (width - 20)) xAnchor = width - 20;
         ctx.fillStyle = '#3bb2d0';
-        ctx.fillRect(xScale(marker[0]) - 20, chartHeight, 40, 20);
+        ctx.fillRect(xAnchor - 20, chartHeight, 40, 20);
         ctx.fillStyle = '#fff';
         ctx.font = '18px sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillText('' + marker[1], xScale(marker[0]), chartHeight + 17);
+        ctx.fillText('' + marker[1], xAnchor, chartHeight + 17);
     }
 }
-
-//=c

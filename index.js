@@ -1,13 +1,21 @@
 module.exports = canvasLineChart;
 
+// var elem = document.createElement('canvas');
+//setInterval(function() {
+// canvasLineChart(elem, [[0, 0], [20, 5]], [10, 5]);
+
+//=elem
+
 function canvasLineChart(c, data, marker) {
-    var width = 170 * 2;
-    var height = 40 * 2;
-    var chartHeight = 30 * 2;
+    var width = 169 * 2;
+    var height = 30 * 2;
+    var chartHeight = 20 * 2;
     c.width = width;
     c.height = height;
     c.style.width = width/2 + 'px';
     c.style.height = height/2 + 'px';
+
+  	var margin = 5;
 
     var ctx = c.getContext('2d');
     ctx.fillStyle = '#fff';
@@ -16,22 +24,20 @@ function canvasLineChart(c, data, marker) {
     // draw 20 x axis ticks
     ctx.fillStyle = '#eee';
     for (var i = 0; i < 20; i++) {
-      ctx.fillRect(i * 20, 0, 2, chartHeight);
+      ctx.fillRect(xScale(i), 0, 2, chartHeight + margin);
     }
-
-    ctx.fillRect(0, chartHeight, width, 2);
 
     var yScale = (function() {
       var yMax = data.reduce(function(memo, d) {
         return Math.max(d[1], memo);
       }, 0);
       return function(_) {
-        return chartHeight - ((_ / yMax) * chartHeight);
+        return (chartHeight - ((_ / yMax) * (chartHeight - margin)));
       };
     })();
 
     function xScale(_) {
-      return (_ / 20) * width;
+      return ~~(((_ / 20) * (width - margin*2)) + margin);
     }
 
     // draw the data line

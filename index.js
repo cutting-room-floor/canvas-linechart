@@ -51,7 +51,7 @@ function canvasLineChart(c, data, marker) {
 
     if (marker) {
         ctx.fillStyle = '#3bb2d0';
-        ctx.fillRect(xScale(marker[0]), 0, 3, chartHeight);
+        ctx.fillRect(xScale(marker[0]), 0, 3, chartHeight + margin);
     }
 
     ctx.fillStyle = '#000';

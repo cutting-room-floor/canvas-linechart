@@ -15,7 +15,7 @@ function canvasLineChart(c, data, marker) {
     c.style.width = width/2 + 'px';
     c.style.height = height/2 + 'px';
 
-  	var margin = 5;
+    var margin = 5;
 
     var ctx = c.getContext('2d');
     ctx.fillStyle = '#fff';
@@ -51,7 +51,7 @@ function canvasLineChart(c, data, marker) {
 
     if (marker) {
         ctx.fillStyle = '#3bb2d0';
-        ctx.fillRect(xScale(marker[0]), 0, 3, height);
+        ctx.fillRect(xScale(marker[0]), 0, 3, chartHeight + margin);
     }
 
     ctx.fillStyle = '#000';
@@ -69,10 +69,8 @@ function canvasLineChart(c, data, marker) {
         if (xAnchor < 20) xAnchor = 20;
         if (xAnchor > (width - 20)) xAnchor = width - 20;
         ctx.fillStyle = '#3bb2d0';
-        ctx.fillRect(xAnchor - 20, chartHeight, 40, 20);
-        ctx.fillStyle = '#fff';
-        ctx.font = '18px sans-serif';
+        ctx.font = 'bold 20px monospace';
         ctx.textAlign = 'center';
-        ctx.fillText('' + marker[1], xAnchor, chartHeight + 17);
+        ctx.fillText('' + marker[1], xAnchor, chartHeight + 20);
     }
 }

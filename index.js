@@ -7,7 +7,7 @@ module.exports = canvasLineChart;
 //=elem
 
 function canvasLineChart(c, data, marker) {
-    var width = 169 * 2;
+    var width = 140 * 2;
     var height = 30 * 2;
     var chartHeight = 20 * 2;
     c.width = width;

@@ -23,7 +23,7 @@ function canvasLineChart(c, width, data, marker) {
 
     // draw 20 x axis ticks
     ctx.fillStyle = '#eee';
-    for (var i = 0; i < 20; i++) {
+    for (var i = 0; i < 21; i++) {
       ctx.fillRect(xScale(i), 0, 2, chartHeight + margin);
     }
 

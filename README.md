@@ -2,7 +2,7 @@
 
 ## api
 
-    lineChart(elem, width, [[x, value], ... ], [x, label]);
+    lineChart(elem, width, [[x, value], ... ], baseCurve, [x, label]);
 
 ## install
 

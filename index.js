@@ -32,7 +32,8 @@ function canvasLineChart(c, width, data, base, marker) {
         return Math.max(d[1], memo);
       }, 0);
       return function(_) {
-        return (chartHeight - ((_ / yMax) * (chartHeight - margin)));
+        var scaled = _ === 0 && yMax === 0 ? 0 : _ / yMax;
+        return (chartHeight - (scaled * (chartHeight - margin)));
       };
     })();
 

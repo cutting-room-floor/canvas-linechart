@@ -1,6 +1,6 @@
 {
   "name": "canvas-linechart",
-  "version": "1.1.7",
+  "version": "1.1.8",
   "description": "simple, dependency-free canvas chart",
   "main": "index.js",
   "scripts": {

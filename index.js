@@ -30,9 +30,12 @@ function canvasLineChart(c, width, data, base, marker) {
     var yScale = (function() {
       var yMax = data.reduce(function(memo, d) {
         return Math.max(d[1], memo);
-      }, 0);
+      }, -Infinity);
+      var yMin = data.reduce(function(memo, d) {
+        return Math.min(d[1], memo);
+      }, Infinity);
       return function(_) {
-        var scaled = _ === 0 && yMax === 0 ? 0 : _ / yMax;
+        var scaled = (_ - yMin) / ((yMax - yMin) || 1);
         return (chartHeight - (scaled * (chartHeight - margin)));
       };
     })();

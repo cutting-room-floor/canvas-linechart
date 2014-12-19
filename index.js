@@ -9,22 +9,22 @@ module.exports = canvasLineChart;
 function canvasLineChart(c, width, data, base, marker) {
     width = width * 2;
     var height = 30 * 2;
-    var chartHeight = 20 * 2;
+    var chartHeight = 18 * 2;
     c.width = width;
     c.height = height;
     c.style.width = width/2 + 'px';
     c.style.height = height/2 + 'px';
 
-    var margin = 5;
+    var margin = 8;
 
     var ctx = c.getContext('2d');
-    ctx.fillStyle = '#fff';
+    ctx.fillStyle = 'transparent';
     ctx.fillRect(0, 0, width, height);
 
     // draw 20 x axis ticks
-    ctx.fillStyle = '#eee';
+    ctx.fillStyle = 'rgba(0,0,0,0.05)';
     for (var i = 0; i < 21; i++) {
-      ctx.fillRect(xScale(i), 0, 2, chartHeight + margin);
+      ctx.fillRect(xScale(i), 0, 4, chartHeight + margin);
     }
 
     var yScale = (function() {
@@ -69,7 +69,7 @@ function canvasLineChart(c, width, data, base, marker) {
     }
 
     // draw the data line
-    ctx.strokeStyle = '#999';
+    ctx.strokeStyle = '#777';
     ctx.lineWidth = 4;
 
     data.forEach(function(d, i) {
@@ -88,9 +88,9 @@ function canvasLineChart(c, width, data, base, marker) {
         ctx.fillRect(xScale(marker[0]), 0, 3, chartHeight + margin);
     }
 
-    ctx.fillStyle = '#000';
-    ctx.strokeStyle = '#fff';
-    ctx.lineWidth = 2;
+    ctx.fillStyle = '#fff';
+    ctx.strokeStyle = '#777';
+    ctx.lineWidth = 4;
     data.forEach(function(data, i) {
       ctx.beginPath();
       ctx.arc(xScale(data[0]), yScale(data[1]), 5, 0, 2 * Math.PI, false);
@@ -106,6 +106,6 @@ function canvasLineChart(c, width, data, base, marker) {
         ctx.fillStyle = '#3bb2d0';
         ctx.font = 'bold 20px monospace';
         ctx.textAlign = 'center';
-        ctx.fillText('' + marker[1], xAnchor, chartHeight + 20);
+        ctx.fillText('' + marker[1], xAnchor, chartHeight + 22);
     }
 }

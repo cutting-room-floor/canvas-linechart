@@ -2,7 +2,9 @@
 
 ## api
 
-    lineChart(elem, width, [[x, value, omitDot?], ... ], baseCurve, [x, label]);
+    lineChart(elem, width, [[x, value, options?], ... ], baseCurve, [x, label]);
+
+    options are `end` for omitting the dot and `focus` for highlighting the dot
 
 ## install
 

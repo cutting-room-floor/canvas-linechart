@@ -89,11 +89,16 @@ function canvasLineChart(c, width, data, base, marker) {
   }
 
   ctx.fillStyle = '#fff';
-  ctx.strokeStyle = '#777';
   ctx.lineWidth = 4;
   data.forEach(function(data, i) {
     ctx.beginPath();
-    if (!data[2]) ctx.arc(xScale(data[0]), yScale(data[1]), 5, 0, 2 * Math.PI, false);
+    ctx.strokeStyle = '#777';
+    var r = 5;
+    if (data[2] && data[2].focus) {
+      ctx.strokeStyle = '#3bb2d0';
+      r = 6;
+    }
+    if (!data[2] || !data[2].end) ctx.arc(xScale(data[0]), yScale(data[1]), r, 0, 2 * Math.PI, false);
     ctx.fill();
     ctx.stroke();
   });

@@ -2,9 +2,9 @@
 
 ## api
 
-    lineChart(elem, width, [[x, value, options?], ... ], baseCurve, [x, label]);
+    lineChart(elem, width, [[x, value, options?], ... ], baseCurve, [x, label], step);
 
-    options are `end` for omitting the dot and `focus` for highlighting the dot
+Options are `end` for omitting the dot and `focus` for highlighting the dot. If `step` is true, stops will not be interpolated.
 
 ## install
 

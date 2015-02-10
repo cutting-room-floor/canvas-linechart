@@ -6,7 +6,7 @@ module.exports = canvasLineChart;
 
 //=elem
 
-function canvasLineChart(c, width, data, base, marker) {
+function canvasLineChart(c, width, data, base, marker, step) {
   width = width * 2;
   var height = 30 * 2;
   var chartHeight = 18 * 2;
@@ -74,7 +74,10 @@ function canvasLineChart(c, width, data, base, marker) {
 
   data.forEach(function(d, i) {
     if (i === 0) ctx.lineTo(xScale(d[0]), yScale(d[1]));
-    else {
+    else if (step) {
+      ctx.lineTo(xScale(d[0]), yScale(data[i-1][1]));
+      ctx.lineTo(xScale(d[0]), yScale(d[1]));
+    } else {
       var cp = getControlPoints(data[i-1], d);
       ctx.bezierCurveTo(xScale(cp[0][0]), yScale(cp[0][1]),
         xScale(cp[1][0]), yScale(cp[1][1]),

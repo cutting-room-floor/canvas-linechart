@@ -87,7 +87,7 @@ function canvasLineChart(c, width, data, base, marker, step) {
   ctx.stroke();
 
   if (marker) {
-    ctx.fillStyle = '#3bb2d0';
+    ctx.fillStyle = '#3887be';
     ctx.fillRect(xScale(marker[0]), 0, 3, chartHeight + margin);
   }
 
@@ -98,7 +98,7 @@ function canvasLineChart(c, width, data, base, marker, step) {
     ctx.strokeStyle = '#777';
     var r = 5;
     if (data[2] && data[2].focus) {
-      ctx.strokeStyle = '#3bb2d0';
+      ctx.strokeStyle = '#3887be';
       r = 6;
     }
     if (!data[2] || !data[2].end) ctx.arc(xScale(data[0]), yScale(data[1]), r, 0, 2 * Math.PI, false);
@@ -111,7 +111,7 @@ function canvasLineChart(c, width, data, base, marker, step) {
     var xAnchor = xScale(marker[0]);
     if (xAnchor < 20) xAnchor = 20;
     if (xAnchor > (width - 20)) xAnchor = width - 20;
-    ctx.fillStyle = '#3bb2d0';
+    ctx.fillStyle = '#3887be';
     ctx.font = 'bold 20px monospace';
     ctx.textAlign = 'center';
     ctx.fillText('' + marker[1], xAnchor, chartHeight + 22);

@@ -22,7 +22,7 @@ function canvasLineChart(c, width, data, base, marker, step) {
   ctx.fillRect(0, 0, width, height);
 
   // draw 20 x axis ticks
-  ctx.fillStyle = 'rgba(0,0,0,0.05)';
+  ctx.fillStyle = 'rgba(0,0,0,0.20)';
   for (var i = 0; i < 21; i++) {
     ctx.fillRect(xScale(i), 0, 4, chartHeight + margin);
   }

@@ -35,13 +35,13 @@ function canvasLineChart(c, height, width, data, base, marker, step, stepSize, m
 
   var yScale = (function() {
     var yMax = data.reduce(function(memo, d) {
-      return Math.max(d[1], memo) + margin;
+      return Math.max(d[1], memo);
     }, -Infinity);
     var yMin = data.reduce(function(memo, d) {
-      return Math.min(d[1], memo) - margin;
+      return Math.min(d[1], memo);
     }, Infinity);
     return function(_) {
-      var scaled = (_ - yMin) / ((yMax - yMin) || 1);
+      var scaled = (_ - (yMin - margin/2)) / (((yMax + margin/2) - (yMin - margin/2)) || 1);
       return (chartHeight - (scaled * chartHeight));
     };
   })();

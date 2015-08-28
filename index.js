@@ -19,7 +19,7 @@ function canvasLineChart(c, height, width, data, base, marker, step, stepSize, m
   c.height = height;
   c.style.width = width / scaleFactor + 'px';
   c.style.height = height / scaleFactor + 'px';
-  var textOffset = 12 * scaleFactor;
+  var textOffset = margin;
   var markerOffset = 10 * scaleFactor;
   var fontSize = 10 * scaleFactor;
 
@@ -30,24 +30,24 @@ function canvasLineChart(c, height, width, data, base, marker, step, stepSize, m
   // draw [steps] axis ticks
   ctx.fillStyle = 'rgba(0,0,0,0.1)';
   for (var i = min; i <= max; i += stepSize) {
-    ctx.fillRect(parseInt(xScale(i)), 0, 2 * scaleFactor, chartHeight + margin);
+    ctx.fillRect(xScale(i), 0, 2 * scaleFactor, chartHeight + margin);
   }
 
   var yScale = (function() {
     var yMax = data.reduce(function(memo, d) {
-      return Math.max(d[1], memo);
+      return Math.max(d[1], memo) + margin;
     }, -Infinity);
     var yMin = data.reduce(function(memo, d) {
-      return Math.min(d[1], memo);
+      return Math.min(d[1], memo) - margin;
     }, Infinity);
     return function(_) {
       var scaled = (_ - yMin) / ((yMax - yMin) || 1);
-      return (chartHeight - (scaled * (chartHeight - margin)));
+      return (chartHeight - (scaled * chartHeight));
     };
   })();
 
   function xScale(_) {
-    return ~~(((_ / max) * (width - margin * scaleFactor)) + margin);
+    return ~~(((_ / max) * (width - margin)) + margin/2);
   }
 
   function curveMidpoint(a, b) {

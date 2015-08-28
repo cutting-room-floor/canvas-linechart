@@ -6,25 +6,31 @@ module.exports = canvasLineChart;
 
 //=elem
 
-function canvasLineChart(c, width, data, base, marker, step) {
-  width = width * 2;
-  var height = 30 * 2;
-  var chartHeight = 18 * 2;
+function canvasLineChart(c, height, width, data, base, marker, step, stepSize, min, max, scaleFactor) {
+  var stepSize = stepSize || 1;
+  var min = min || 0;
+  var max = max || 20;
+  var scaleFactor = scaleFactor || 1;
+  width = width * scaleFactor;
+  var height = height * scaleFactor;
+  var margin = 12 * scaleFactor;
+  var chartHeight = height - (margin * scaleFactor);
   c.width = width;
   c.height = height;
-  c.style.width = width/2 + 'px';
-  c.style.height = height/2 + 'px';
-
-  var margin = 10;
+  c.style.width = width / scaleFactor + 'px';
+  c.style.height = height / scaleFactor + 'px';
+  var textOffset = margin;
+  var markerOffset = 10 * scaleFactor;
+  var fontSize = 10 * scaleFactor;
 
   var ctx = c.getContext('2d');
   ctx.fillStyle = 'transparent';
   ctx.fillRect(0, 0, width, height);
 
-  // draw 20 x axis ticks
+  // draw [steps] axis ticks
   ctx.fillStyle = 'rgba(0,0,0,0.1)';
-  for (var i = 0; i < 21; i++) {
-    ctx.fillRect(xScale(i), 0, 4, chartHeight + margin);
+  for (var i = min; i <= max; i += stepSize) {
+    ctx.fillRect(xScale(i), 0, 2 * scaleFactor, chartHeight + margin);
   }
 
   var yScale = (function() {
@@ -35,13 +41,13 @@ function canvasLineChart(c, width, data, base, marker, step) {
       return Math.min(d[1], memo);
     }, Infinity);
     return function(_) {
-      var scaled = (_ - yMin) / ((yMax - yMin) || 1);
-      return (chartHeight - (scaled * (chartHeight - margin)));
+      var scaled = (_ - (yMin - margin/2)) / (((yMax + margin/2) - (yMin - margin/2)) || 1);
+      return (chartHeight - (scaled * chartHeight));
     };
   })();
 
   function xScale(_) {
-    return ~~(((_ / 20) * (width - margin*2)) + margin);
+    return ~~(((_ / max) * (width - margin)) + margin/2);
   }
 
   function curveMidpoint(a, b) {
@@ -70,7 +76,7 @@ function canvasLineChart(c, width, data, base, marker, step) {
 
   // draw the data line
   ctx.strokeStyle = '#222';
-  ctx.lineWidth = 5;
+  ctx.lineWidth = 2 * scaleFactor;
 
   data.forEach(function(d, i) {
     if (i === 0) ctx.lineTo(xScale(d[0]), yScale(d[1]));
@@ -88,7 +94,7 @@ function canvasLineChart(c, width, data, base, marker, step) {
 
   if (marker) {
     ctx.fillStyle = '#ddd';
-    ctx.fillRect(xScale(marker[0]), 0, 3, chartHeight + margin);
+    ctx.fillRect(xScale(marker[0]), 0, 1.5 * scaleFactor, chartHeight + margin);
   }
 
   ctx.fillStyle = '#fff';
@@ -96,31 +102,31 @@ function canvasLineChart(c, width, data, base, marker, step) {
   data.forEach(function(data, i) {
     // Draw circle
     ctx.beginPath();
-    ctx.lineWidth = 2;
-    var r = 5;
+    ctx.lineWidth = 2 * scaleFactor;
+    var r = 3 * scaleFactor;
     if (data[2] && data[2].focus) {
-      ctx.lineWidth = 6;
-      r = 9;
+      ctx.lineWidth = 3 * scaleFactor;
+      r = 5 * scaleFactor;
     }
-    if (!data[2] || !data[2].end) ctx.arc(xScale(data[0]), yScale(data[1]), r, 0, 2 * Math.PI, false);
+    if (!data[2] || !data[2].end) ctx.arc(xScale(data[0]), yScale(data[1]), r, 0, (2 * Math.PI) * scaleFactor, false);
     ctx.fill();
     ctx.stroke();
 
     // Draw text
     ctx.fillStyle = '#ddd';
-    ctx.font = '20px Menlo, monospace';
+    ctx.font = fontSize + 'px Menlo, monospace';
     ctx.textAlign = 'center';
-    if (!data[2] || !data[2].end) ctx.fillText(data[0], xScale(data[0]), chartHeight + 24);
+    if (!data[2] || !data[2].end) ctx.fillText(data[0], xScale(data[0]), chartHeight + textOffset);
   });
 
 
   if (marker) {
     var xAnchor = xScale(marker[0]);
-    if (xAnchor < 20) xAnchor = 20;
-    if (xAnchor > (width - 20)) xAnchor = width - 20;
+    if (xAnchor < max) xAnchor = max;
+    if (xAnchor > (width - max)) xAnchor = width - max;
     ctx.fillStyle = '#ddd';
-    ctx.font = 'bold 20px monospace';
+    ctx.font = 'bold' + fontSize + 'px Menlo, monospace';
     ctx.textAlign = 'center';
-    ctx.fillText('' + marker[1], xAnchor, chartHeight + 22);
+    ctx.fillText('' + marker[1], xAnchor, chartHeight + markerOffset);
   }
 }

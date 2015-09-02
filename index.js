@@ -41,8 +41,8 @@ function canvasLineChart(c, height, width, data, base, marker, step, stepSize, m
       return Math.min(d[1], memo);
     }, Infinity);
     return function(_) {
-      var scaled = (_ - (yMin - margin/2)) / (((yMax + margin/2) - (yMin - margin/2)) || 1);
-      return (chartHeight - (scaled * chartHeight));
+      var scaled = (_ - yMin) / ((yMax - yMin) || 1);
+      return (chartHeight - (scaled * (chartHeight - margin)));
     };
   })();
 

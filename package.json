@@ -4,7 +4,7 @@
   "description": "simple, dependency-free canvas chart",
   "main": "index.js",
   "scripts": {
-    "test": "eslint index.js"
+    "test": "eslint index.js && tap test/test.js"
   },
   "repository": {
     "type": "git",
@@ -22,7 +22,13 @@
   },
   "homepage": "https://github.com/mapbox/canvas-linechart",
   "dependencies": {
+    "clamp": "^1.0.1",
     "defined": "^1.0.0",
     "eslint": "^1.5.0"
+  },
+  "devDependencies": {
+    "canvas": "^1.2.9",
+    "image-equal": "^1.1.0",
+    "tap": "^1.4.1"
   }
 }

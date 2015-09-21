@@ -1,50 +1,28 @@
-var defined = require('defined');
+var defined = require('defined'),
+  clamp = require('clamp'),
+  getControlPoints = require('./get_control_points');
 
 module.exports = canvasLineChart;
 
-// var elem = document.createElement('canvas');
-//setInterval(function() {
-// canvasLineChart(elem, [[0, 0], [20, 5]], [10, 5]);
-
-//=elem
-
-function getControlPoints(a, b) {
-  // thanks to http://scaledinnovation.com/analytics/splines/aboutSplines.html
-  var c = curveMidpoint(a, b);
-  var x0 = a[0], y0 = a[1], x1 = c[0], y1 = c[1], x2 = b[0], y2 = b[1], t=0.5;
-  var d01 = Math.sqrt(Math.pow(x1 - x0, 2) + Math.pow(y1 - y0, 2));
-  var d12 = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-  var fa = t * d01 / (d01 + d12);
-  var fb = t * d12 / (d01 + d12);
-  var p1x = x1 - fa * (x2 - x0);
-  var p1y = y1 - fa * (y2 - y0);
-  var p2x = x1 + fb * (x2 - x0);
-  var p2y = y1 + fb * (y2 - y0);
-  return [[p1x, p1y], [p2x, p2y]];
-}
-
-function curveMidpoint(a, b) {
-  var mx = a[0] + (b[0] - a[0]) / 2;
-  var t = base === 1 ?
-    (mx - a[0]) / (b[0] - a[0]) :
-    (Math.pow(base, mx - a[0]) - 1) / (Math.pow(base, b[0] - a[0]) - 1);
-  var my = (a[1] * (1 - t)) + (b[1] * t);
-  return [mx, my];
-}
-
 function canvasLineChart(c, height, width, data, base, marker, step, stepSize, min, max, scaleFactor) {
+
   stepSize = defined(stepSize, 1);
   min = defined(min, 0);
   max = defined(max, 20);
+
   scaleFactor = defined(scaleFactor, 1);
-  width = width * scaleFactor;
-  height = height * scaleFactor;
+  width *= scaleFactor;
+  height *= scaleFactor;
+
   var margin = 12 * scaleFactor;
   var chartHeight = height - (margin * scaleFactor);
   c.width = width;
   c.height = height;
-  c.style.width = width / scaleFactor + 'px';
-  c.style.height = height / scaleFactor + 'px';
+  // node-canvas doesn't expose a style object
+  if (c.style) {
+    c.style.width = width / scaleFactor + 'px';
+    c.style.height = height / scaleFactor + 'px';
+  }
   var textOffset = margin;
   var markerOffset = 10 * scaleFactor;
   var fontSize = 10 * scaleFactor;
@@ -73,7 +51,7 @@ function canvasLineChart(c, height, width, data, base, marker, step, stepSize, m
   })();
 
   function xScale(_) {
-    return ~~(((_ / max) * (width - margin)) + margin/2);
+    return ~~(((_ / max) * (width - margin)) + margin / 2);
   }
 
   // draw the data line
@@ -86,7 +64,7 @@ function canvasLineChart(c, height, width, data, base, marker, step, stepSize, m
       ctx.lineTo(xScale(d[0]), yScale(data[i - 1][1]));
       ctx.lineTo(xScale(d[0]), yScale(d[1]));
     } else {
-      var cp = getControlPoints(data[i-1], d);
+      var cp = getControlPoints(data[i - 1], d, base);
       ctx.bezierCurveTo(xScale(cp[0][0]), yScale(cp[0][1]),
         xScale(cp[1][0]), yScale(cp[1][1]),
         xScale(d[0]), yScale(d[1]));
@@ -101,6 +79,7 @@ function canvasLineChart(c, height, width, data, base, marker, step, stepSize, m
 
   ctx.fillStyle = '#fff';
   ctx.strokeStyle = '#222';
+
   data.forEach(function(data) {
     // Draw circle
     ctx.beginPath();
@@ -110,7 +89,9 @@ function canvasLineChart(c, height, width, data, base, marker, step, stepSize, m
       ctx.lineWidth = 3 * scaleFactor;
       r = 5 * scaleFactor;
     }
-    if (!data[2] || !data[2].end) ctx.arc(xScale(data[0]), yScale(data[1]), r, 0, (2 * Math.PI) * scaleFactor, false);
+    if (!data[2] || !data[2].end) {
+      ctx.arc(xScale(data[0]), yScale(data[1]), r, 0, (2 * Math.PI) * scaleFactor, false);
+    }
     ctx.fill();
     ctx.stroke();
 
@@ -118,14 +99,13 @@ function canvasLineChart(c, height, width, data, base, marker, step, stepSize, m
     ctx.fillStyle = '#ddd';
     ctx.font = fontSize + 'px Menlo, monospace';
     ctx.textAlign = 'center';
-    if (!data[2] || !data[2].end) ctx.fillText(data[0], xScale(data[0]), chartHeight + textOffset);
+    if (!data[2] || !data[2].end) {
+      ctx.fillText(data[0], xScale(data[0]), chartHeight + textOffset);
+    }
   });
 
-
   if (marker) {
-    var xAnchor = xScale(marker[0]);
-    if (xAnchor < max) xAnchor = max;
-    if (xAnchor > (width - max)) xAnchor = width - max;
+    var xAnchor = clamp(xScale(marker[0]), max, width - max);
     ctx.fillStyle = '#ddd';
     ctx.font = 'bold' + fontSize + 'px Menlo, monospace';
     ctx.textAlign = 'center';

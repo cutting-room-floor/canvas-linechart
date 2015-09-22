@@ -1,3 +1,29 @@
+<style>
+body {
+  background-color: #000;
+}
+div {
+  margin: 10px 0;
+  background-color: #404040;
+}
+img {
+  border: 1px solid cyan;
+  display: inline-block;
+  margin: 10px;
+}
+</style>
 <body>
-<script src='bundle.js'></script>
+<script>
+fetch('files.json').then(function(resp) {
+  return resp.json();
+}).then(function(files) {
+  files.forEach(function(f) {
+    var d = document.body.appendChild(document.createElement('div'));
+    var img = d.appendChild(document.createElement('img'));
+    img.src = 'fixture/' + f + '.png';
+    var img2 = d.appendChild(document.createElement('img'));
+    img2.src = 'output/' + f + '.png';
+  });
+});
+</script>
 </body>

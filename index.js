@@ -1,31 +1,59 @@
-var defined = require('defined'),
+var xtend = require('xtend'),
+  linearScale = require('simple-linear-scale'),
   clamp = require('clamp'),
+  util = require('./util'),
   getControlPoints = require('./get_control_points');
 
 module.exports = canvasLineChart;
 
-function canvasLineChart(c, height, width, data, base, marker, step, stepSize, min, max, scaleFactor) {
+/**
+ * @param {Canvas} c canvas element
+ * @param {number} height
+ * @param {number} width
+ * @param {Array<Array<number>>} data, as [zoom, val] doubles
+ * @param {number} base mathematical base, a number between 0 and 1
+ * @param {Object} options
+ * @param {number} [options.options.scaleFactor=1] dpi ratio
+ * @param {number} [options.min=0] minimum x value
+ * @param {number} [options.max=22] maximum y value
+ * @param {Array<number>} options.marker a marker as a [zoom, val] pair
+ * @param {boolean} options.step whether to represent the chart as stair-steps
+ * rather than an interpolated line.
+ */
+function canvasLineChart(c, width, height, data, base, options) {
 
-  stepSize = defined(stepSize, 1);
-  min = defined(min, 0);
-  max = defined(max, 20);
+  options = xtend({
+    scaleFactor: 1,
+    stepSize: 1,
+    min: 0,
+    max: 22
+  }, options);
 
-  scaleFactor = defined(scaleFactor, 1);
-  width *= scaleFactor;
-  height *= scaleFactor;
+  width *= options.scaleFactor;
+  height *= options.scaleFactor;
 
-  var margin = 12 * scaleFactor;
-  var chartHeight = height - (margin * scaleFactor);
+  var margin = 12 * options.scaleFactor;
+  var values = data.map(function(d) { return d[1]; });
+
+  var xScaleRaw = linearScale(
+    [options.min, options.max],
+    [margin, width - margin]);
+
+  var xScale = function(v) {
+    return ~~xScaleRaw(v);
+  };
+
+  var chartHeight = height - (margin * options.scaleFactor);
+
+  var yScale = linearScale([util.min(values), util.max(values)],
+    [chartHeight, margin]);
+
   c.width = width;
   c.height = height;
-  // node-canvas doesn't expose a style object
-  if (c.style) {
-    c.style.width = width / scaleFactor + 'px';
-    c.style.height = height / scaleFactor + 'px';
-  }
-  var textOffset = margin;
-  var markerOffset = 10 * scaleFactor;
-  var fontSize = 10 * scaleFactor;
+  c.style.width = width / options.scaleFactor + 'px';
+  c.style.height = height / options.scaleFactor + 'px';
+  var markerOffset = 10 * options.scaleFactor;
+  var fontSize = 10 * options.scaleFactor;
 
   var ctx = c.getContext('2d');
   ctx.fillStyle = 'transparent';
@@ -33,34 +61,17 @@ function canvasLineChart(c, height, width, data, base, marker, step, stepSize, m
 
   // draw [steps] axis ticks
   ctx.fillStyle = 'rgba(0,0,0,0.1)';
-  for (var i = min; i <= max; i += stepSize) {
-    ctx.fillRect(xScale(i), 0, 2 * scaleFactor, chartHeight + margin);
-  }
-
-  var yScale = (function() {
-    var yMax = data.reduce(function(memo, d) {
-      return Math.max(d[1], memo);
-    }, -Infinity);
-    var yMin = data.reduce(function(memo, d) {
-      return Math.min(d[1], memo);
-    }, Infinity);
-    return function(_) {
-      var scaled = (_ - yMin) / ((yMax - yMin) || 1);
-      return (chartHeight - (scaled * (chartHeight - margin)));
-    };
-  })();
-
-  function xScale(_) {
-    return ~~(((_ / max) * (width - margin)) + margin / 2);
+  for (var i = options.min; i <= options.max; i += options.stepSize) {
+    ctx.fillRect(xScale(i), 0, 2 * options.scaleFactor, chartHeight + margin);
   }
 
   // draw the data line
   ctx.strokeStyle = '#222';
-  ctx.lineWidth = 2 * scaleFactor;
+  ctx.lineWidth = 2 * options.scaleFactor;
 
   data.forEach(function(d, i) {
     if (i === 0) ctx.lineTo(xScale(d[0]), yScale(d[1]));
-    else if (step) {
+    else if (options.step) {
       ctx.lineTo(xScale(d[0]), yScale(data[i - 1][1]));
       ctx.lineTo(xScale(d[0]), yScale(d[1]));
     } else {
@@ -72,9 +83,9 @@ function canvasLineChart(c, height, width, data, base, marker, step, stepSize, m
   });
   ctx.stroke();
 
-  if (marker) {
+  if (options.marker) {
     ctx.fillStyle = '#ddd';
-    ctx.fillRect(xScale(marker[0]), 0, 1.5 * scaleFactor, chartHeight + margin);
+    ctx.fillRect(xScale(options.marker[0]), 0, 1.5 * options.scaleFactor, chartHeight + margin);
   }
 
   ctx.fillStyle = '#fff';
@@ -83,14 +94,14 @@ function canvasLineChart(c, height, width, data, base, marker, step, stepSize, m
   data.forEach(function(data) {
     // Draw circle
     ctx.beginPath();
-    ctx.lineWidth = 2 * scaleFactor;
-    var r = 3 * scaleFactor;
+    ctx.lineWidth = 2 * options.scaleFactor;
+    var r = 3 * options.scaleFactor;
     if (data[2] && data[2].focus) {
-      ctx.lineWidth = 3 * scaleFactor;
-      r = 5 * scaleFactor;
+      ctx.lineWidth = 3 * options.scaleFactor;
+      r = 5 * options.scaleFactor;
     }
     if (!data[2] || !data[2].end) {
-      ctx.arc(xScale(data[0]), yScale(data[1]), r, 0, (2 * Math.PI) * scaleFactor, false);
+      ctx.arc(xScale(data[0]), yScale(data[1]), r, 0, (2 * Math.PI) * options.scaleFactor, false);
     }
     ctx.fill();
     ctx.stroke();
@@ -100,15 +111,15 @@ function canvasLineChart(c, height, width, data, base, marker, step, stepSize, m
     ctx.font = fontSize + 'px Menlo, monospace';
     ctx.textAlign = 'center';
     if (!data[2] || !data[2].end) {
-      ctx.fillText(data[0], xScale(data[0]), chartHeight + textOffset);
+      ctx.fillText(data[0], xScale(data[0]), chartHeight + margin);
     }
   });
 
-  if (marker) {
-    var xAnchor = clamp(xScale(marker[0]), max, width - max);
+  if (options.marker) {
+    var xAnchor = clamp(xScale(options.marker[0]), options.max, width - options.max);
     ctx.fillStyle = '#ddd';
     ctx.font = 'bold' + fontSize + 'px Menlo, monospace';
     ctx.textAlign = 'center';
-    ctx.fillText('' + marker[1], xAnchor, chartHeight + markerOffset);
+    ctx.fillText('' + options.marker[1], xAnchor, chartHeight + markerOffset);
   }
 }

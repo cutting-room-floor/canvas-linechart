@@ -27,8 +27,11 @@
     "eslint": "^1.5.0"
   },
   "devDependencies": {
-    "canvas": "^1.2.9",
+    "browserify": "^11.1.0",
+    "btoa": "^1.1.2",
     "image-equal": "^1.1.0",
-    "tap": "^1.4.1"
+    "smokestack": "^3.3.1",
+    "tap": "^1.4.1",
+    "tape": "^4.2.0"
   }
 }

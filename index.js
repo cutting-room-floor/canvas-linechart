@@ -16,6 +16,7 @@ module.exports = canvasLineChart;
  * @param {number} [options.options.scaleFactor=1] dpi ratio
  * @param {number} [options.min=0] minimum x value
  * @param {number} [options.max=22] maximum y value
+ * @param {number} [options.tickSize=1] space between each tick mark
  * @param {Array<number>} options.marker a marker as a [zoom, val] pair
  * @param {boolean} options.step whether to represent the chart as stair-steps
  * rather than an interpolated line.
@@ -24,7 +25,7 @@ function canvasLineChart(c, width, height, data, base, options) {
 
   options = xtend({
     scaleFactor: 1,
-    stepSize: 1,
+    tickSize: 1,
     min: 0,
     max: 22
   }, options);
@@ -61,7 +62,7 @@ function canvasLineChart(c, width, height, data, base, options) {
 
   // draw [steps] axis ticks
   ctx.fillStyle = 'rgba(0,0,0,0.1)';
-  for (var i = options.min; i <= options.max; i += options.stepSize) {
+  for (var i = options.min; i <= options.max; i += options.tickSize) {
     ctx.fillRect(xScale(i), 0, 2 * options.scaleFactor, chartHeight + margin);
   }
 

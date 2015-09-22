@@ -30,10 +30,14 @@ function canvasLineChart(c, width, height, data, base, options) {
     max: 22
   }, options);
 
-  width *= options.scaleFactor;
-  height *= options.scaleFactor;
+  function s(x) { return x * options.scaleFactor; }
 
-  var margin = 12 * options.scaleFactor;
+  width = s(width);
+  height = s(height);
+
+  var margin = s(12);
+  var markerOffset = s(10);
+  var fontSize = s(10);
   var values = data.map(function(d) { return d[1]; });
 
   var xScaleRaw = linearScale(
@@ -44,7 +48,7 @@ function canvasLineChart(c, width, height, data, base, options) {
     return ~~xScaleRaw(v);
   };
 
-  var chartHeight = height - (margin * options.scaleFactor);
+  var chartHeight = height - s(margin);
 
   var yScale = linearScale([util.min(values), util.max(values)],
     [chartHeight, margin]);
@@ -53,8 +57,6 @@ function canvasLineChart(c, width, height, data, base, options) {
   c.height = height;
   c.style.width = width / options.scaleFactor + 'px';
   c.style.height = height / options.scaleFactor + 'px';
-  var markerOffset = 10 * options.scaleFactor;
-  var fontSize = 10 * options.scaleFactor;
 
   var ctx = c.getContext('2d');
   ctx.fillStyle = 'transparent';
@@ -63,12 +65,12 @@ function canvasLineChart(c, width, height, data, base, options) {
   // draw [steps] axis ticks
   ctx.fillStyle = 'rgba(0,0,0,0.1)';
   for (var i = options.min; i <= options.max; i += options.tickSize) {
-    ctx.fillRect(xScale(i), 0, 2 * options.scaleFactor, chartHeight + margin);
+    ctx.fillRect(xScale(i), 0, s(2), chartHeight + margin);
   }
 
   // draw the data line
   ctx.strokeStyle = '#222';
-  ctx.lineWidth = 2 * options.scaleFactor;
+  ctx.lineWidth = s(2);
 
   data.forEach(function(d, i) {
     if (i === 0) ctx.lineTo(xScale(d[0]), yScale(d[1]));
@@ -86,7 +88,7 @@ function canvasLineChart(c, width, height, data, base, options) {
 
   if (options.marker) {
     ctx.fillStyle = '#ddd';
-    ctx.fillRect(xScale(options.marker[0]), 0, 1.5 * options.scaleFactor, chartHeight + margin);
+    ctx.fillRect(xScale(options.marker[0]), 0, s(1.5), chartHeight + margin);
   }
 
   ctx.fillStyle = '#fff';
@@ -95,14 +97,14 @@ function canvasLineChart(c, width, height, data, base, options) {
   data.forEach(function(data) {
     // Draw circle
     ctx.beginPath();
-    ctx.lineWidth = 2 * options.scaleFactor;
-    var r = 3 * options.scaleFactor;
+    ctx.lineWidth = s(2);
+    var r = s(3);
     if (data[2] && data[2].focus) {
-      ctx.lineWidth = 3 * options.scaleFactor;
-      r = 5 * options.scaleFactor;
+      ctx.lineWidth = s(3);
+      r = s(5);
     }
     if (!data[2] || !data[2].end) {
-      ctx.arc(xScale(data[0]), yScale(data[1]), r, 0, (2 * Math.PI) * options.scaleFactor, false);
+      ctx.arc(xScale(data[0]), yScale(data[1]), r, 0, s(2 * Math.PI), false);
     }
     ctx.fill();
     ctx.stroke();

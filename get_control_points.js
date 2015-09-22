@@ -1,6 +1,4 @@
-/**
- * thanks to http://scaledinnovation.com/analytics/splines/aboutSplines.html
- */
+// thanks to http://scaledinnovation.com/analytics/splines/aboutSplines.html
 function getControlPoints(a, b, base) {
   var c = curveMidpoint(a, b, base);
   var x0 = a[0], y0 = a[1], x1 = c[0], y1 = c[1], x2 = b[0], y2 = b[1], t=0.5;

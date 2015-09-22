@@ -13,7 +13,7 @@ test('fixtures', function(t) {
     deps: {}
   }, path.join(__dirname, './page.js')])
     .bundle()
-    .pipe(smokestack({ timeout: 15000 }))
+    .pipe(smokestack({ timeout: 15000, browser: process.env.TEST_BROWSER || 'chrome' }))
     .pipe(concat(function(res) {
       res.toString('utf8').split('\n').filter(String).forEach(function(d, i) {
         var fixturePath = path.join(__dirname, '/fixture/' + configs[i].name + '.png');

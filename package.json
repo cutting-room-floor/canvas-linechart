@@ -4,7 +4,8 @@
   "description": "simple, dependency-free canvas chart",
   "main": "index.js",
   "scripts": {
-    "test": "eslint index.js && tap test/test.js"
+    "lint": "eslint index.js",
+    "test": "npm run lint && tap test/test.js"
   },
   "repository": {
     "type": "git",

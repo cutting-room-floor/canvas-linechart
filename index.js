@@ -1,7 +1,7 @@
 var xtend = require('xtend'),
+  getControlPoints = require('get-control-points'),
   linearScale = require('simple-linear-scale'),
-  util = require('./util'),
-  getControlPoints = require('./get_control_points');
+  util = require('./util');
 
 module.exports = canvasLineChart;
 

@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/mapbox/canvas-linechart",
   "dependencies": {
+    "get-control-points": "^1.0.0",
     "simple-linear-scale": "^1.0.1",
     "xtend": "^4.0.0"
   },

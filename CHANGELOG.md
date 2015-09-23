@@ -1,3 +1,7 @@
+## 2.1.0
+
+* Removes marker text
+
 ## 2.0.0
 
 Refactors:

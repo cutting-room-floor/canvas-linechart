@@ -1,6 +1,6 @@
 ## `canvasLineChart`
 
-
+Draw a line chart on canvas.
 
 ### Parameters
 
@@ -9,7 +9,7 @@
 * `width` **`number`** 
 * `data` **`Array<Array<number>>`** , as [zoom, val] doubles
 * `base` **`number`** mathematical base, a number between 0 and 1
-* `options` **`Object`** 
+* `options` **`Object`** optional customizations
 
 
 

@@ -1,23 +1,23 @@
 var xtend = require('xtend'),
   linearScale = require('simple-linear-scale'),
-  clamp = require('clamp'),
   util = require('./util'),
   getControlPoints = require('./get_control_points');
 
 module.exports = canvasLineChart;
 
 /**
+ * Draw a line chart on canvas.
  * @param {Canvas} c canvas element
  * @param {number} height
  * @param {number} width
  * @param {Array<Array<number>>} data, as [zoom, val] doubles
  * @param {number} base mathematical base, a number between 0 and 1
- * @param {Object} options
+ * @param {Object} options optional customizations
  * @param {number} [options.options.scaleFactor=1] dpi ratio
  * @param {number} [options.min=0] minimum x value
  * @param {number} [options.max=22] maximum y value
  * @param {number} [options.tickSize=1] space between each tick mark
- * @param {Array<number>} options.marker a marker as a [zoom, val] pair
+ * @param {number} options.marker a marker as a zoom value
  * @param {boolean} options.step whether to represent the chart as stair-steps
  * rather than an interpolated line.
  */
@@ -36,7 +36,6 @@ function canvasLineChart(c, width, height, data, base, options) {
   height = s(height);
 
   var margin = s(12);
-  var markerOffset = s(10);
   var fontSize = s(10);
   var values = data.map(function(d) { return d[1]; });
 
@@ -68,6 +67,11 @@ function canvasLineChart(c, width, height, data, base, options) {
     ctx.fillRect(xScale(i), 0, s(2), chartHeight + margin);
   }
 
+  if (options.marker) {
+    ctx.fillStyle = '#ddd';
+    ctx.fillRect(xScale(options.marker[0]), 0, s(2), chartHeight + margin);
+  }
+
   // draw the data line
   ctx.strokeStyle = '#222';
   ctx.lineWidth = s(2);
@@ -85,11 +89,6 @@ function canvasLineChart(c, width, height, data, base, options) {
     }
   });
   ctx.stroke();
-
-  if (options.marker) {
-    ctx.fillStyle = '#ddd';
-    ctx.fillRect(xScale(options.marker[0]) - s(0.75), 0, s(1.5), chartHeight);
-  }
 
   ctx.fillStyle = '#fff';
   ctx.strokeStyle = '#222';
@@ -117,12 +116,4 @@ function canvasLineChart(c, width, height, data, base, options) {
       ctx.fillText(data[0], xScale(data[0]), chartHeight + margin);
     }
   });
-
-  if (options.marker) {
-    var xAnchor = clamp(xScale(options.marker[0]), options.max, width - options.max);
-    ctx.fillStyle = '#ddd';
-    ctx.font = 'bold' + fontSize + 'px Menlo, monospace';
-    ctx.textAlign = 'center';
-    ctx.fillText('' + options.marker[1], xAnchor, chartHeight + markerOffset);
-  }
 }

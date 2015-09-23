@@ -69,7 +69,7 @@ function canvasLineChart(c, width, height, data, base, options) {
 
   if (typeof options.marker === 'number') {
     ctx.fillStyle = '#ddd';
-    ctx.fillRect(xScale(options.marker[0]), 0, s(2), chartHeight + margin);
+    ctx.fillRect(xScale(options.marker), 0, s(2), chartHeight + margin);
   }
 
   // draw the data line

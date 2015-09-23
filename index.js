@@ -67,7 +67,7 @@ function canvasLineChart(c, width, height, data, base, options) {
     ctx.fillRect(xScale(i), 0, s(2), chartHeight + margin);
   }
 
-  if (options.marker) {
+  if (typeof options.marker === 'number') {
     ctx.fillStyle = '#ddd';
     ctx.fillRect(xScale(options.marker[0]), 0, s(2), chartHeight + margin);
   }
